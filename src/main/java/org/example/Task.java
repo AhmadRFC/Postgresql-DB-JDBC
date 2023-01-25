@@ -5,22 +5,24 @@ import org.example.DBConnection;
 import java.sql.*;
 
 public class Task {
-    private String name;
+    private String title;
     private boolean isComplete;
+    private String madeby;
 
-    public Task(String name, boolean isComplete) {
-        this.name = name;
+    public Task(String title, boolean isComplete, String madeby) {
+        this.title = title;
         this.isComplete = isComplete;
+        this.madeby = madeby;
     }
     public Task() {
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String name) {
+        this.title = name;
     }
 
     public boolean isComplete() {
@@ -30,15 +32,23 @@ public class Task {
     public void setComplete(boolean complete) {
         isComplete = complete;
     }
+    public void setMadeby (String madeby) {
+        this.madeby = madeby;
+    }
+    public String getMadeby() {
+        return madeby;
+    }
+
 
     public void insertTask() {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
             Statement stmt = dbConnection.createStatement();
             PreparedStatement insertStmt =
-                    dbConnection.prepareStatement("INSERT INTO todo (task, done) VALUES (?, ?);");
-            insertStmt.setString(1, this.name);
-            insertStmt.setBoolean(2, (this.isComplete));
+                    dbConnection.prepareStatement("INSERT INTO todo (task, done, madeby) VALUES (?, ?, ?);");
+            insertStmt.setString(1, this.title);
+            insertStmt.setBoolean(2, this.isComplete);
+            insertStmt.setString(3, this.madeby);
             int rows = insertStmt.executeUpdate();
             System.out.println("Rows affected: " + rows);
         } catch (SQLException e) {
@@ -50,13 +60,13 @@ public class Task {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
             Statement stmt = dbConnection.createStatement();
-            String query = "SELECT serial, task, done FROM todo";
+            String query = "SELECT serial, task, done, madeby FROM todo";
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 //Display values
                 String row =
-                        "Serial: " + rs.getInt("serial") + " org.example.Task: " + rs.getString(
-                                "task") + " Done: " + rs.getBoolean("done") + " Owner: " + rs.getString("Owner") + "\n";
+                        "Serial: " + rs.getInt("serial") + " Task: " + rs.getString(
+                                "task") + " Done: " + rs.getBoolean("done") + "madeby: " + rs.getString("madeby") + "\n";
                 System.out.print(row);
             }
         } catch (SQLException e) {
@@ -65,15 +75,15 @@ public class Task {
 
     }
 
-    public void updateTask(int serial, String updateTaskName, boolean doneOrNot, String owner) {
+    public void updateTask(int serial, String updateTaskName, boolean doneOrNot, String madeby) {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
             Statement stmt = dbConnection.createStatement();
             PreparedStatement updateStmt =
-                    dbConnection.prepareStatement("UPDATE todo SET task = ?, done = ?, owner ? WHERE serial = ?");
+                    dbConnection.prepareStatement("UPDATE todo SET task = ?, done = ?, madeby = ? WHERE serial = ?");
             updateStmt.setString(1, updateTaskName);
             updateStmt.setBoolean(2, doneOrNot);
-            updateStmt.setString(3, owner);
+            updateStmt.setString(3, madeby);
             updateStmt.setInt(4, serial);
             int row = updateStmt.executeUpdate();
             System.out.println("Rows updated: " + row);
@@ -97,6 +107,6 @@ public class Task {
     }
 
     public String toString() {
-        return "org.example.Task: " + this.name + "\nDone: " + (this.isComplete ? "1" : "0");
+        return "org.example.Task: " + this.title + "\nDone: " + (this.isComplete ? "1" : "0");
     }
 }
