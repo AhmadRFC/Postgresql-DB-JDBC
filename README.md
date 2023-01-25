@@ -1,2 +1,2 @@
-# postgresql-DB-JDBC
+# Todo-demo
 Implementing postgresql database using JDBC
