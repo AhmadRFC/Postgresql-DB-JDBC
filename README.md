@@ -1,2 +1,2 @@
 # Todo-demo
-Implementing postgresql database using JDBC
+To-do application that uses postgresql DB
