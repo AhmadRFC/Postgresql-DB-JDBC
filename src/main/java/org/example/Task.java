@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.DBConnection;
 
 import java.sql.*;
 
@@ -14,6 +13,7 @@ public class Task {
         this.isComplete = isComplete;
         this.madeby = madeby;
     }
+
     public Task() {
     }
 
@@ -32,9 +32,11 @@ public class Task {
     public void setComplete(boolean complete) {
         isComplete = complete;
     }
-    public void setMadeby (String madeby) {
+
+    public void setMadeby(String madeby) {
         this.madeby = madeby;
     }
+
     public String getMadeby() {
         return madeby;
     }
@@ -43,9 +45,8 @@ public class Task {
     public void insertTask() {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
-            Statement stmt = dbConnection.createStatement();
-            PreparedStatement insertStmt =
-                    dbConnection.prepareStatement("INSERT INTO todo (task, done, madeby) VALUES (?, ?, ?);");
+            PreparedStatement insertStmt = dbConnection.prepareStatement(
+                    "INSERT INTO todo (task, done, madeby) VALUES (?, ?, ?);");
             insertStmt.setString(1, this.title);
             insertStmt.setBoolean(2, this.isComplete);
             insertStmt.setString(3, this.madeby);
@@ -59,14 +60,16 @@ public class Task {
     public void retrieveTasks() {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
-            Statement stmt = dbConnection.createStatement();
+            Statement stmt = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
             String query = "SELECT serial, task, done, madeby FROM todo";
             ResultSet rs = stmt.executeQuery(query);
+
             while (rs.next()) {
                 //Display values
-                String row =
-                        "Serial: " + rs.getInt("serial") + " Task: " + rs.getString(
-                                "task") + " Done: " + rs.getBoolean("done") + "madeby: " + rs.getString("madeby") + "\n";
+                String row = "Serial: " + rs.getInt("serial") + ", Task: " + rs.getString("task")
+                        + ", Done: " + rs.getBoolean("done") + ", madeby: " + rs.getString("madeby")
+                        + "\n";
                 System.out.print(row);
             }
         } catch (SQLException e) {
@@ -78,9 +81,8 @@ public class Task {
     public void updateTask(int serial, String updateTaskName, boolean doneOrNot, String madeby) {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
-            Statement stmt = dbConnection.createStatement();
-            PreparedStatement updateStmt =
-                    dbConnection.prepareStatement("UPDATE todo SET task = ?, done = ?, madeby = ? WHERE serial = ?");
+            PreparedStatement updateStmt = dbConnection.prepareStatement(
+                    "UPDATE todo SET task = ?, done = ?, madeby = ? WHERE serial = ?");
             updateStmt.setString(1, updateTaskName);
             updateStmt.setBoolean(2, doneOrNot);
             updateStmt.setString(3, madeby);
@@ -95,7 +97,6 @@ public class Task {
     public void deleteTask(int serial) {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
-            Statement stmt = dbConnection.createStatement();
             PreparedStatement deleteStmt =
                     dbConnection.prepareStatement("DELETE FROM todo WHERE serial = ?");
             deleteStmt.setInt(1, serial);

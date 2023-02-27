@@ -8,13 +8,13 @@ public class DBConnection {
     private final String url;
     private final int port;
     private final String dbName;
-    private Connection connection;
+    private final Connection connection;
 
     private static DBConnection instance;
     private DBConnection() throws SQLException {
         this.dbName = "tododb";
         this.port = 5432;
-        this.url = "jdbc:postgresql://localhost:" + Integer.toString(this.port) + "/" + this.dbName;
+        this.url = "jdbc:postgresql://localhost:" + this.port + "/" + this.dbName;
         Properties props = new Properties();
         props.setProperty("user", System.getenv("DB_USER"));
         props.setProperty("password", System.getenv("DB_PASS"));
