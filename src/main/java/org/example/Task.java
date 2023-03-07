@@ -60,10 +60,8 @@ public class Task {
     public void retrieveTasks() {
         try {
             Connection dbConnection = DBConnection.getInstance().getConnection();
-            Statement stmt = dbConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
-            String query = "SELECT serial, task, done, madeby FROM todo";
-            ResultSet rs = stmt.executeQuery(query);
+            PreparedStatement stmt = dbConnection.prepareStatement("SELECT serial, task, done, madeby FROM todo");
+            ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
                 //Display values
